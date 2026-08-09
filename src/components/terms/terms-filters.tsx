@@ -4,12 +4,14 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { buildTermsUrl } from "@/lib/terms/query";
+import type { TermsQuery } from "@/lib/terms/query";
 
 type TermsFiltersProps = {
     hasTerms: boolean;
-    status: string;
-    ai: string;
-    searchQuery: string;
+    status: TermsQuery["status"];
+    ai: TermsQuery["ai"];
+    searchQuery: TermsQuery["search"];
     resultCount: number;
 };
 
@@ -27,34 +29,18 @@ export function TermsFilters({
         return null;
     }
 
-    function buildFilterHref(
-        nextStatus?: string,
-        nextAi?: string
+    function navigate(
+        nextStatus: TermsQuery["status"] = "",
+        nextAi: TermsQuery["ai"] = ""
     ) {
-        const params = new URLSearchParams();
-
-        if (searchQuery) {
-            params.set("search", searchQuery);
-        }
-
-        if (nextStatus) {
-            params.set("status", nextStatus);
-        }
-
-        if (nextAi) {
-            params.set("ai", nextAi);
-        }
-
-        const query = params.toString();
-
-        return query
-            ? `/dashboard/terms?${query}`
-            : "/dashboard/terms";
-    }
-
-    function navigate(nextStatus?: string, nextAi?: string) {
         startTransition(() => {
-            router.push(buildFilterHref(nextStatus, nextAi));
+            router.push(
+                buildTermsUrl({
+                    search: searchQuery,
+                    status: nextStatus,
+                    ai: nextAi,
+                })
+            );
         });
     }
 
@@ -75,7 +61,7 @@ export function TermsFilters({
                             onClick={() =>
                                 navigate(
                                     status === "new"
-                                        ? undefined
+                                        ? ""
                                         : "new",
                                     ai
                                 )
@@ -92,7 +78,7 @@ export function TermsFilters({
                             onClick={() =>
                                 navigate(
                                     status === "learning"
-                                        ? undefined
+                                        ? ""
                                         : "learning",
                                     ai
                                 )
@@ -109,7 +95,7 @@ export function TermsFilters({
                             onClick={() =>
                                 navigate(
                                     status === "mastered"
-                                        ? undefined
+                                        ? ""
                                         : "mastered",
                                     ai
                                 )
@@ -135,7 +121,7 @@ export function TermsFilters({
                                 navigate(
                                     status,
                                     ai === "generated"
-                                        ? undefined
+                                        ? ""
                                         : "generated"
                                 )
                             }
@@ -152,7 +138,7 @@ export function TermsFilters({
                                 navigate(
                                     status,
                                     ai === "missing"
-                                        ? undefined
+                                        ? ""
                                         : "missing"
                                 )
                             }
@@ -187,13 +173,7 @@ export function TermsFilters({
                             size="sm"
                             disabled={isPending}
                             onClick={() =>
-                                startTransition(() => {
-                                    router.push(
-                                        searchQuery
-                                            ? `/dashboard/terms?search=${encodeURIComponent(searchQuery)}`
-                                            : "/dashboard/terms"
-                                    );
-                                })
+                                navigate("", "")
                             }
                         >
                             ✕ Clear Filters
