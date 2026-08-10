@@ -4,26 +4,103 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
+import { redirect } from "next/navigation";
+import {
+    buildCollectionsUrl,
+    parseCollectionsQuery,
+} from "@/lib/collections/query";
+import { COLLECTIONS_PER_PAGE } from "@/lib/constants";
+import { Pagination } from "@/components/ui/pagination";
 
 export const metadata: Metadata = {
     title: "Collections",
 };
 
-export default async function CollectionsPage() {
+type PageProps = {
+    searchParams: Promise<{
+        page?: string;
+    }>;
+};
+
+export default async function CollectionsPage({
+    searchParams,
+}: PageProps) {
+    const parsed = parseCollectionsQuery(
+        await searchParams
+    );
+
+    if (parsed.shouldRedirect) {
+        redirect(
+            buildCollectionsUrl(parsed.filters)
+        );
+    }
+
+    const { page } = parsed.filters;
+
     const supabase = await createClient();
+
+    // --------------------------------------------------------------
+    // Get the current user's collections count
+    // --------------------------------------------------------------
+
+    const {
+        count: totalCollections,
+        error: countError,
+    } = await supabase
+        .from("collections")
+        .select("*", {
+            count: "exact",
+            head: true,
+        });
+
+    if (countError) {
+        throw countError;
+    }
+
+    const totalPages = Math.max(
+        1,
+        Math.ceil(
+            (totalCollections ?? 0) /
+            COLLECTIONS_PER_PAGE
+        )
+    );
+
+    // --------------------------------------------------------------
+    // Handle a page number that is beyond the last page
+    // --------------------------------------------------------------
+
+    if (
+        (totalCollections ?? 0) > 0 &&
+        page > totalPages
+    ) {
+        redirect(
+            buildCollectionsUrl({
+                page: totalPages,
+            })
+        );
+    }
+
+    // --------------------------------------------------------------
+    // Fetch only the current page
+    // --------------------------------------------------------------
+
+    const from = (page - 1) * COLLECTIONS_PER_PAGE;
+
+    const to = from + COLLECTIONS_PER_PAGE - 1;
 
     const {
         data: collections,
-        error,
+        error: collectionsError,
     } = await supabase
         .from("collections")
         .select("*")
         .order("created_at", {
             ascending: false,
-        });
+        })
+        .range(from, to);
 
-    if (error) {
-        console.error(error);
+    if (collectionsError) {
+        throw collectionsError;
     }
 
     const collectionList = collections ?? [];
@@ -44,8 +121,8 @@ export default async function CollectionsPage() {
 
             <section className="space-y-3">
                 <p className="text-sm text-muted-foreground">
-                    {collectionList.length}{" "}
-                    {collectionList.length === 1
+                    {totalCollections ?? 0}{" "}
+                    {(totalCollections ?? 0) === 1
                         ? "collection"
                         : "collections"}
                 </p>
@@ -53,7 +130,7 @@ export default async function CollectionsPage() {
                 {collectionList.map((collection) => (
                     <div
                         key={collection.id}
-                        className=" group flex items-center justify-between rounded-xl border p-4 transition-colors hover:bg-muted/50"
+                        className="group flex items-center justify-between rounded-xl border p-4 transition-colors hover:bg-muted/50"
                     >
                         <Link
                             href={`/dashboard/collections/${collection.id}`}
@@ -92,6 +169,13 @@ export default async function CollectionsPage() {
                     </div>
                 )}
             </section>
+
+            <Pagination
+                currentPage={page}
+                totalItems={totalCollections ?? 0}
+                itemsPerPage={COLLECTIONS_PER_PAGE}
+                basePath="collections"
+            />
         </div>
     );
 }

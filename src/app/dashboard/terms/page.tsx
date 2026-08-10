@@ -263,6 +263,7 @@ export default async function TermsPage({ searchParams }: PageProps) {
                 currentPage={currentPage}
                 totalItems={totalTerms ?? 0}
                 itemsPerPage={TERMS_PER_PAGE}
+                basePath="terms"
                 search={search}
                 status={status}
                 ai={ai}
