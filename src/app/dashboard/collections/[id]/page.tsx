@@ -3,6 +3,13 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import {
+    buildCollectionDetailUrl,
+    parseCollectionDetailQuery,
+} from "@/lib/collections/detail-query";
+import { TERMS_PER_PAGE } from "@/lib/constants";
+import { Pagination } from "@/components/ui/pagination";
 
 type CollectionTerm = {
     id: string;
@@ -12,7 +19,10 @@ type CollectionTerm = {
 };
 
 type PageProps = {
-    params: Promise<{ id: string; }>;
+    params: Promise<{ id: string }>;
+    searchParams: Promise<{
+        page?: string;
+    }>;
 };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -40,10 +50,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
 }
 
-export default async function CollectionPage({ params }: PageProps) {
+export default async function CollectionPage({ params, searchParams }: PageProps) {
     const supabase = await createClient();
 
     const { id } = await params;
+
+    const parsed = parseCollectionDetailQuery(
+        await searchParams
+    );
+
+    if (parsed.shouldRedirect) {
+        redirect(
+            buildCollectionDetailUrl(
+                id,
+                parsed.filters
+            )
+        );
+    }
+
+    const { page } = parsed.filters;
 
     const { data: collection, error } =
         await supabase
@@ -56,50 +81,79 @@ export default async function CollectionPage({ params }: PageProps) {
         notFound();
     }
 
-    const { data: collectionTerms, error: collectionTermsError } =
-        await supabase
-            .from("term_collections")
-            .select(`
-                term_id,
-                terms (
-                    id,
-                    term,
-                    term_type,
-                    status
-                )
-            `)
-            .eq("collection_id", id);
+    // --------------------------------------------------------------
+    // Count terms in this collection
+    // --------------------------------------------------------------
 
-    if (collectionTermsError) {
-        console.error(collectionTermsError);
+    const {
+        count: totalTerms,
+        error: countError,
+    } = await supabase
+        .from("term_collections")
+        .select("*", {
+            count: "exact",
+            head: true,
+        })
+        .eq("collection_id", id);
+
+    if (countError) {
+        throw countError;
     }
 
-    const totalTerms = collectionTerms?.length ?? 0;
+    const totalPages = Math.max(
+        1,
+        Math.ceil(
+            (totalTerms ?? 0) / TERMS_PER_PAGE
+        )
+    );
 
-    if (totalTerms === 0) {
-        return (
-            <div className="space-y-8">
-                <section>
-                    <h1 className="text-3xl font-semibold tracking-tight">
-                        {collection.name}
-                    </h1>
+    // --------------------------------------------------------------
+    // Handle a page number beyond the last page
+    // --------------------------------------------------------------
 
-                    <p className="mt-1 text-sm text-muted-foreground">
-                        0 terms
-                    </p>
-                </section>
-
-                <section className="rounded-xl border p-8 text-center">
-                    <h2 className="font-semibold">
-                        No terms yet
-                    </h2>
-
-                    <p className="mt-2 text-sm text-muted-foreground">
-                        Add terms to this collection from the Term Details page.
-                    </p>
-                </section>
-            </div>
+    if (
+        (totalTerms ?? 0) > 0 &&
+        page > totalPages
+    ) {
+        redirect(
+            buildCollectionDetailUrl(
+                id,
+                {
+                    page: totalPages,
+                }
+            )
         );
+    }
+
+    // --------------------------------------------------------------
+    // Fetch only the current page
+    // --------------------------------------------------------------
+
+    const from =
+        (page - 1) * TERMS_PER_PAGE;
+
+    const to =
+        from + TERMS_PER_PAGE - 1;
+
+    const {
+        data: collectionTerms,
+        error: collectionTermsError,
+    } = await supabase
+        .from("term_collections")
+        .select(`
+            term_id,
+            terms (
+                id,
+                term,
+                term_type,
+                status
+            )
+        `)
+        .eq("collection_id", id)
+        .range(from, to);
+
+    if (collectionTermsError) {
+        throw collectionTermsError;
     }
 
     return (
@@ -110,45 +164,84 @@ export default async function CollectionPage({ params }: PageProps) {
                 </h1>
 
                 <p className="mt-1 text-sm text-muted-foreground">
-                    {totalTerms} {totalTerms === 1 ? "term" : "terms"}
+                    {totalTerms ?? 0}{" "}
+                    {(totalTerms ?? 0) === 1
+                        ? "term"
+                        : "terms"}
                 </p>
             </section>
 
-            <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                {collectionTerms?.map((collectionTerm) => {
-                    const term = collectionTerm.terms as unknown as CollectionTerm;
+            {(totalTerms ?? 0) === 0 ? (
+                <section className="rounded-xl border p-8 text-center">
+                    <h2 className="font-semibold">
+                        No terms yet
+                    </h2>
 
-                    if (!term) {
-                        return null;
-                    }
+                    <p className="mt-2 text-sm text-muted-foreground">
+                        Add terms to this collection from the Term Details page.
+                    </p>
+                </section>
+            ) : (
+                <>
+                    <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                        {collectionTerms?.map(
+                            (collectionTerm) => {
+                                const term =
+                                    collectionTerm.terms as unknown as CollectionTerm;
 
-                    return (
-                        <div
-                            key={collectionTerm.term_id}
-                            className="rounded-xl border p-4 transition-colors hover:bg-muted/50"
-                        >
-                            <Link
-                                href={`/dashboard/terms/${term.id}`}
-                                className="block group"
-                            >
-                                <p className="text-lg font-semibold transition-colors group-hover:text-primary group-hover:underline">
-                                    {term.term}
-                                </p>
+                                if (!term) {
+                                    return null;
+                                }
 
-                                <div className="mt-3 flex flex-wrap gap-2">
-                                    <Badge variant="outline" className="capitalize">
-                                        {term.term_type.replaceAll("_", " ")}
-                                    </Badge>
+                                return (
+                                    <div
+                                        key={
+                                            collectionTerm.term_id
+                                        }
+                                        className="rounded-xl border p-4 transition-colors hover:bg-muted/50"
+                                    >
+                                        <Link
+                                            href={`/dashboard/terms/${term.id}`}
+                                            className="block group"
+                                        >
+                                            <p className="text-lg font-semibold transition-colors group-hover:text-primary group-hover:underline">
+                                                {term.term}
+                                            </p>
 
-                                    <Badge variant="secondary" className="capitalize">
-                                        {term.status}
-                                    </Badge>
-                                </div>
-                            </Link>
-                        </div>
-                    );
-                })}
-            </section>
+                                            <div className="mt-3 flex flex-wrap gap-2">
+                                                <Badge
+                                                    variant="outline"
+                                                    className="capitalize"
+                                                >
+                                                    {term.term_type.replaceAll(
+                                                        "_",
+                                                        " "
+                                                    )}
+                                                </Badge>
+
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="capitalize"
+                                                >
+                                                    {term.status}
+                                                </Badge>
+                                            </div>
+                                        </Link>
+                                    </div>
+                                );
+                            }
+                        )}
+                    </section>
+
+                    <Pagination
+                        currentPage={page}
+                        totalItems={totalTerms ?? 0}
+                        itemsPerPage={TERMS_PER_PAGE}
+                        basePath="collection-detail"
+                        collectionId={id}
+                    />
+                </>
+            )}
         </div>
     );
 }

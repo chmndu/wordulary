@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { buildTermsUrl } from "@/lib/terms/query";
 import { buildCollectionsUrl } from "@/lib/collections/query";
+import { buildCollectionDetailUrl } from "@/lib/collections/detail-query";
 import type { TermsQuery } from "@/lib/terms/query";
 
 type PaginationProps = {
@@ -14,7 +15,12 @@ type PaginationProps = {
     totalItems: number;
     itemsPerPage: number;
 
-    basePath: "terms" | "collections";
+    basePath:
+    | "terms"
+    | "collections"
+    | "collection-detail";
+
+    collectionId?: string;
 
     search?: TermsQuery["search"];
     status?: TermsQuery["status"];
@@ -32,6 +38,7 @@ export function Pagination({
     totalItems,
     itemsPerPage,
     basePath,
+    collectionId,
     search,
     status,
     ai,
@@ -45,6 +52,21 @@ export function Pagination({
             return buildCollectionsUrl({
                 page,
             });
+        }
+
+        if (basePath === "collection-detail") {
+            if (!collectionId) {
+                throw new Error(
+                    "collectionId is required for collection-detail pagination"
+                );
+            }
+
+            return buildCollectionDetailUrl(
+                collectionId,
+                {
+                    page,
+                }
+            );
         }
 
         return buildTermsUrl({
