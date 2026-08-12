@@ -93,7 +93,10 @@ export default async function CollectionsPage({
         error: collectionsError,
     } = await supabase
         .from("collections")
-        .select("*")
+        .select(`
+        *,
+        term_collections(count)
+    `)
         .order("created_at", {
             ascending: false,
         })
@@ -130,29 +133,42 @@ export default async function CollectionsPage({
                 {collectionList.map((collection) => (
                     <div
                         key={collection.id}
-                        className="group flex items-center justify-between rounded-xl border p-4 transition-colors hover:bg-muted/50"
+                        className="relative rounded-xl border p-4 transition-colors hover:bg-muted/50"
                     >
                         <Link
                             href={`/dashboard/collections/${collection.id}`}
-                            className="flex-1 font-medium transition-colors group-hover:text-primary group-hover:underline"
+                            className="block group pr-10"
                         >
-                            {collection.name}
+                            <div className="flex items-center justify-between gap-4">
+                                <span className="min-w-0 font-medium transition-colors truncate group-hover:text-primary group-hover:underline">
+                                    {collection.name}
+                                </span>
+
+                                <span className="shrink-0 text-sm text-muted-foreground">
+                                    {collection.term_collections[0]?.count ?? 0}{" "}
+                                    {collection.term_collections[0]?.count === 1
+                                        ? "term"
+                                        : "terms"}
+                                </span>
+                            </div>
                         </Link>
 
-                        <form action={deleteCollection}>
-                            <input
-                                type="hidden"
-                                name="id"
-                                value={collection.id}
-                            />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                            <form action={deleteCollection}>
+                                <input
+                                    type="hidden"
+                                    name="id"
+                                    value={collection.id}
+                                />
 
-                            <ConfirmDeleteButton
-                                itemName={collection.name}
-                                itemType="Collection"
-                                description="The collection will be deleted, but your terms will remain."
-                                iconOnly
-                            />
-                        </form>
+                                <ConfirmDeleteButton
+                                    itemName={collection.name}
+                                    itemType="Collection"
+                                    description="The collection will be deleted, but your terms will remain."
+                                    iconOnly
+                                />
+                            </form>
+                        </div>
                     </div>
                 ))}
 

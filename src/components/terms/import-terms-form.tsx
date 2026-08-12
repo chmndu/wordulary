@@ -162,12 +162,12 @@ export function ImportTermsForm({ collections }: ImportTermsFormProps) {
                         </p>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                         {collections.map((collection) => (
                             <label
                                 key={collection.id}
                                 htmlFor={collection.id}
-                                className="flex w-full cursor-pointer items-center gap-3 rounded-md px-2 py-2 hover:bg-muted/50 active:bg-muted"
+                                className="flex min-w-0 cursor-pointer items-center gap-2 rounded-md px-2 py-2 hover:bg-muted/50 active:bg-muted"
                             >
                                 <Checkbox
                                     id={collection.id}
@@ -178,7 +178,7 @@ export function ImportTermsForm({ collections }: ImportTermsFormProps) {
                                     }
                                 />
 
-                                <span>{collection.name}</span>
+                                <span className="truncate">{collection.name}</span>
                             </label>
                         ))}
                     </div>

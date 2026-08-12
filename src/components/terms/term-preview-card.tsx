@@ -19,13 +19,15 @@ export function TermPreviewCard({
                 </p>
             </div>
 
-            <h3 className="text-sm font-semibold text-muted-foreground">
-                Definition
-            </h3>
+            <div>
+                <h3 className="text-sm font-semibold text-muted-foreground">
+                    Definition
+                </h3>
 
-            <p className="mt-2 leading-7">
-                {generatedTerm.definition}
-            </p>
+                <p className="mt-2 leading-7">
+                    {generatedTerm.definition}
+                </p>
+            </div>
 
             <div>
                 <h3 className="text-sm font-semibold text-muted-foreground">
