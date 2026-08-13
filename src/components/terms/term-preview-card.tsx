@@ -10,7 +10,7 @@ export function TermPreviewCard({
     return (
         <div className="rounded-xl border p-6 space-y-8">
             <div>
-                <h3 className="text-3xl font-semibold tracking-tight">
+                <h3 className="text-3xl font-semibold tracking-tight wrap-break-word">
                     {generatedTerm.term}
                 </h3>
 

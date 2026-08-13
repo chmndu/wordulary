@@ -30,7 +30,7 @@ export default async function DashboardLayout({
 
             <MobileHeader />
 
-            <main className="min-h-screen px-6 pb-24 pt-20 md:ml-52 lg:ml-64 md:py-6">
+            <main className="min-h-screen px-6 pb-24 pt-20 md:ml-52 xl:ml-64 md:py-6">
                 {children}
             </main>
 

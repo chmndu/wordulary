@@ -204,7 +204,7 @@ export default async function CollectionPage({ params, searchParams }: PageProps
                                             href={`/dashboard/terms/${term.id}`}
                                             className="block group"
                                         >
-                                            <p className="text-lg font-semibold transition-colors group-hover:text-primary group-hover:underline">
+                                            <p className="text-lg font-semibold transition-colors wrap-break-word group-hover:text-primary group-hover:underline">
                                                 {term.term}
                                             </p>
 

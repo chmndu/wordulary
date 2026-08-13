@@ -61,23 +61,23 @@ export function TermsTable({ terms, hasSearch, hasActiveFilter }: TermsTableProp
                                 Term
                             </th>
 
-                            <th className="px-4 py-3 text-left text-sm font-semibold text-muted-foreground">
+                            <th className="lg:w-32 xl:w-36 px-4 py-3 text-left text-sm font-semibold text-muted-foreground">
                                 Type
                             </th>
 
-                            <th className="w-40 px-4 py-3 text-center text-sm font-semibold text-muted-foreground">
+                            <th className="lg:w-28 xl:w-40 px-4 py-3 text-center text-sm font-semibold text-muted-foreground">
                                 Status
                             </th>
 
-                            <th className="w-40 px-4 py-3 text-center text-sm font-semibold text-muted-foreground">
+                            <th className="lg:w-36 xl:w-40 px-4 py-3 text-center text-sm font-semibold text-muted-foreground">
                                 AI Status
                             </th>
 
-                            <th className="w-40 px-4 py-3 text-right text-sm font-semibold text-muted-foreground">
+                            <th className="lg:w-36 xl:w-40 px-4 py-3 text-right text-sm font-semibold text-muted-foreground">
                                 Created
                             </th>
 
-                            <th className="w-40 px-6 py-3 text-right  text-sm font-semibold text-muted-foreground">
+                            <th className="lg:w-28 xl:w-36 px-6 py-3 text-right  text-sm font-semibold text-muted-foreground">
                                 Actions
                             </th>
                         </tr>
@@ -92,7 +92,7 @@ export function TermsTable({ terms, hasSearch, hasActiveFilter }: TermsTableProp
                                 <td className="px-6 py-3">
                                     <Link
                                         href={`/dashboard/terms/${term.id}`}
-                                        className="font-medium transition-colors hover:text-primary hover:underline"
+                                        className="font-medium transition-colors wrap-break-word hover:text-primary hover:underline"
                                     >
                                         {term.term}
                                     </Link>
@@ -152,7 +152,7 @@ export function TermsTable({ terms, hasSearch, hasActiveFilter }: TermsTableProp
                             href={`/dashboard/terms/${term.id}`}
                             className="block group"
                         >
-                            <p className="text-lg font-semibold transition-colors group-hover:text-primary group-hover:underline">
+                            <p className="text-lg font-semibold transition-colors wrap-break-word group-hover:text-primary group-hover:underline">
                                 {term.term}
                             </p>
 

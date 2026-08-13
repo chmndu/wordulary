@@ -76,7 +76,7 @@ export default async function TermPage({ params }: PageProps) {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-semibold tracking-tight">
+                <h1 className="text-3xl font-semibold tracking-tight wrap-break-word">
                     {term.term}
                 </h1>
 
