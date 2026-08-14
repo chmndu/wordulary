@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { validateTermInput } from "@/lib/validation/term-input";
 
 export async function POST(request: Request) {
     try {
@@ -40,21 +41,40 @@ export async function POST(request: Request) {
                 ) ?? []
             );
 
-        const normalizedTerms =
-            [...new Set(
-                terms.map(
-                    (term: string) =>
-                        term.trim().toLowerCase()
-                )
-            )];
+        const normalizedInput = terms.map(
+            (term: string) =>
+                term.trim().toLowerCase()
+        );
 
-        const uniqueTerms =
-            normalizedTerms.filter(
-                (term) =>
-                    !existing.has(term)
-            );
+        const invalidTerms = normalizedInput.filter(
+            (term: string) =>
+                validateTermInput(term) !== null
+        );
 
-        const rows = uniqueTerms.map(
+        const validTerms = normalizedInput.filter(
+            (term: string) =>
+                validateTermInput(term) === null
+        );
+
+        const uniqueValidTerms = [
+            ...new Set(validTerms),
+        ];
+
+        const duplicateCount =
+            validTerms.length - uniqueValidTerms.length;
+
+        const newTerms = uniqueValidTerms.filter(
+            (term) =>
+                !existing.has(term)
+        );
+
+        const existingCount =
+            uniqueValidTerms.length - newTerms.length;
+
+        const totalDuplicates =
+            duplicateCount + existingCount;
+
+        const rows = newTerms.map(
             (term: string) => ({
                 user_id: user.id,
                 term,
@@ -99,7 +119,8 @@ export async function POST(request: Request) {
 
         return NextResponse.json({
             imported: rows.length,
-            skipped: terms.length - rows.length,
+            duplicates: totalDuplicates,
+            invalid: invalidTerms.length,
         });
     } catch (error) {
         console.error(error);

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { generateTerm } from "@/lib/ai/generate-term";
+import { validateTermInput } from "@/lib/validation/term-input";
 
 export async function POST(
     request: Request
@@ -9,9 +10,18 @@ export async function POST(
 
         const term = body.term;
 
-        if (typeof term !== "string" || !term.trim()) {
+        if (typeof term !== "string") {
             return NextResponse.json(
-                { error: "Term is required" },
+                { error: "Term is required." },
+                { status: 400 }
+            );
+        }
+
+        const validationError = validateTermInput(term);
+
+        if (validationError) {
+            return NextResponse.json(
+                { error: validationError },
                 { status: 400 }
             );
         }

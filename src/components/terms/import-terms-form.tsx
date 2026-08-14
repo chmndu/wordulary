@@ -62,15 +62,33 @@ export function ImportTermsForm({ collections }: ImportTermsFormProps) {
                     ? "term"
                     : "terms";
 
-            const skippedLabel =
-                data.skipped === 1
+            const duplicateLabel =
+                data.duplicates === 1
                     ? "duplicate"
                     : "duplicates";
 
-            const message =
-                data.skipped > 0
-                    ? `Successfully imported ${data.imported} ${importedLabel}. Skipped ${data.skipped} ${skippedLabel}.`
-                    : `Successfully imported ${data.imported} ${importedLabel}.`;
+            const invalidLabel =
+                data.invalid === 1
+                    ? "invalid entry"
+                    : "invalid entries";
+
+            const messages = [
+                `Successfully imported ${data.imported} ${importedLabel}.`,
+            ];
+
+            if (data.duplicates > 0) {
+                messages.push(
+                    `Skipped ${data.duplicates} ${duplicateLabel}.`
+                );
+            }
+
+            if (data.invalid > 0) {
+                messages.push(
+                    `Skipped ${data.invalid} ${invalidLabel}.`
+                );
+            }
+
+            const message = messages.join(" ");
 
             setMessage(message);
             setTermsText("");
@@ -162,7 +180,7 @@ export function ImportTermsForm({ collections }: ImportTermsFormProps) {
                         </p>
                     </div>
 
-                    <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         {collections.map((collection) => (
                             <label
                                 key={collection.id}

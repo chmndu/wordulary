@@ -1,11 +1,30 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { validateTermInput } from "@/lib/validation/term-input";
 
 export async function POST(request: Request) {
     try {
         const body = await request.json();
 
-        const normalizedTerm = body.term.trim().toLowerCase();
+        const term = body.term;
+
+        if (typeof term !== "string") {
+            return NextResponse.json(
+                { error: "Term is required." },
+                { status: 400 }
+            );
+        }
+
+        const validationError = validateTermInput(term);
+
+        if (validationError) {
+            return NextResponse.json(
+                { error: validationError },
+                { status: 400 }
+            );
+        }
+
+        const normalizedTerm = term.trim().toLowerCase();
 
         const supabase = await createClient();
 
@@ -18,7 +37,7 @@ export async function POST(request: Request) {
             );
         }
 
-        const { data: term, error } =
+        const { data: createdTerm, error } =
             await supabase
                 .from("terms")
                 .insert({
@@ -60,7 +79,7 @@ export async function POST(request: Request) {
             const collectionLinks =
                 body.collectionIds.map(
                     (collectionId: string) => ({
-                        term_id: term.id,
+                        term_id: createdTerm.id,
                         collection_id: collectionId,
                     })
                 );
