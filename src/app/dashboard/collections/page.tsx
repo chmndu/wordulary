@@ -1,9 +1,6 @@
-import { deleteCollection } from "@/actions/collections";
 import { CreateCollectionForm } from "@/components/collections/create-collection-form";
 import { createClient } from "@/lib/supabase/server";
-import Link from "next/link";
 import type { Metadata } from "next";
-import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import { redirect } from "next/navigation";
 import {
     buildCollectionsUrl,
@@ -11,6 +8,7 @@ import {
 } from "@/lib/collections/query";
 import { COLLECTIONS_PER_PAGE } from "@/lib/constants";
 import { Pagination } from "@/components/ui/pagination";
+import { CollectionListItem } from "@/components/collections/collection-list-item";
 
 export const metadata: Metadata = {
     title: "Collections",
@@ -131,45 +129,14 @@ export default async function CollectionsPage({
                 </p>
 
                 {collectionList.map((collection) => (
-                    <div
+                    <CollectionListItem
                         key={collection.id}
-                        className="relative rounded-xl border p-4 transition-colors hover:bg-muted/50"
-                    >
-                        <Link
-                            href={`/dashboard/collections/${collection.id}`}
-                            className="block group pr-10"
-                        >
-                            <div className="flex items-center justify-between gap-4">
-                                <span className="min-w-0 font-medium transition-colors truncate group-hover:text-primary group-hover:underline">
-                                    {collection.name}
-                                </span>
-
-                                <span className="shrink-0 text-sm text-muted-foreground">
-                                    {collection.term_collections[0]?.count ?? 0}{" "}
-                                    {collection.term_collections[0]?.count === 1
-                                        ? "term"
-                                        : "terms"}
-                                </span>
-                            </div>
-                        </Link>
-
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                            <form action={deleteCollection}>
-                                <input
-                                    type="hidden"
-                                    name="id"
-                                    value={collection.id}
-                                />
-
-                                <ConfirmDeleteButton
-                                    itemName={collection.name}
-                                    itemType="Collection"
-                                    description="The collection will be deleted, but your terms will remain."
-                                    iconOnly
-                                />
-                            </form>
-                        </div>
-                    </div>
+                        collection={{
+                            id: collection.id,
+                            name: collection.name,
+                            termCount: collection.term_collections[0]?.count ?? 0,
+                        }}
+                    />
                 ))}
 
                 {collectionList.length === 0 && (

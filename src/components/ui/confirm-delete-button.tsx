@@ -15,6 +15,7 @@ type ConfirmDeleteButtonProps = {
     confirmLabel?: string;
     iconOnly?: boolean;
     variant?: VariantProps<typeof buttonVariants>["variant"];
+    onDeletingChange?: (deleting: boolean) => void;
 };
 
 export function ConfirmDeleteButton({
@@ -25,6 +26,7 @@ export function ConfirmDeleteButton({
     confirmLabel,
     iconOnly = false,
     variant = "ghost",
+    onDeletingChange,
 }: ConfirmDeleteButtonProps) {
     const [open, setOpen] = useState(false);
 
@@ -36,6 +38,7 @@ export function ConfirmDeleteButton({
                 iconOnly={iconOnly}
                 variant={variant}
                 aria-label={`Delete ${itemName}`}
+                onPendingChange={onDeletingChange}
                 onClick={(event) => {
                     event.preventDefault();
 
