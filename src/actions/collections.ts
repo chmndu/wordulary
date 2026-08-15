@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 export async function createCollection(
     formData: FormData
@@ -82,4 +83,6 @@ export async function deleteCollection(
     }
 
     revalidatePath("/dashboard/collections");
+    
+    redirect("/dashboard/collections");
 }

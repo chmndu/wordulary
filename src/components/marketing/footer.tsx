@@ -7,7 +7,7 @@ export function Footer() {
     return (
         <footer className="border-t py-10">
             <Container>
-                <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
+                <div className="flex flex-col gap-8 items-center md:flex-row md:justify-between">
                     <div className="flex items-center gap-3">
                         <LogoMark href="/" />
 

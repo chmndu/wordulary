@@ -10,6 +10,8 @@ import {
 } from "@/lib/collections/detail-query";
 import { TERMS_PER_PAGE } from "@/lib/constants";
 import { Pagination } from "@/components/ui/pagination";
+import { deleteCollection } from "@/actions/collections";
+import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 
 type CollectionTerm = {
     id: string;
@@ -242,6 +244,35 @@ export default async function CollectionPage({ params, searchParams }: PageProps
                     />
                 </>
             )}
+
+            <div className="rounded-xl border p-6">
+                <h2 className="text-lg font-semibold text-destructive">
+                    Danger Zone
+                </h2>
+
+                <p className="mt-1 text-sm text-muted-foreground">
+                    Permanently delete this collection.
+                </p>
+
+                <form
+                    action={deleteCollection}
+                    className="mt-4"
+                >
+                    <input
+                        type="hidden"
+                        name="id"
+                        value={collection.id}
+                    />
+
+                    <ConfirmDeleteButton
+                        label="Delete Collection"
+                        itemName={collection.name}
+                        itemType="Collection"
+                        description="The collection will be deleted, but your terms will remain."
+                        variant="destructive"
+                    />
+                </form>
+            </div>
         </div>
     );
 }
