@@ -69,7 +69,7 @@ export function TermsTable({ terms, hasSearch, hasActiveFilter }: TermsTableProp
                                 AI Status
                             </th>
 
-                            <th className="lg:w-36 xl:w-40 px-4 py-3 text-right text-sm font-semibold text-muted-foreground">
+                            <th className="lg:w-32 xl:w-36 px-4 py-3 text-right text-sm font-semibold text-muted-foreground">
                                 Created
                             </th>
 

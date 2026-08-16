@@ -20,6 +20,19 @@ Built with Next.js, Supabase, and Google's Gemini API, Wordulary focuses on a cl
 
 ---
 
+## 🌐 Demo
+
+**Live Demo:** [Try Wordulary](https://wordulary.vercel.app/)
+
+Use the demo account below to explore the application without creating an account.
+
+- **Email:** demo.testin9@gmail.com
+- **Password:** WordularyDemo!2026
+
+> The demo account contains sample vocabulary and collections for testing the main features.
+
+---
+
 ## 📑 Table of Contents
 
 - [Features](#-features)
