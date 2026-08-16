@@ -7,8 +7,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { Checkbox } from "@/components/ui/checkbox";
 import { ErrorMessage } from "@/components/ui/error-message";
+import { CollectionCheckboxList } from "../collections/collection-checkbox-list";
 
 type TermGeneratorProps = {
     collections: {
@@ -195,29 +195,12 @@ export function TermGenerator({ collections }: TermGeneratorProps) {
                                 </p>
                             </div>
 
-                            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                                {collections.map((collection) => (
-                                    <label
-                                        key={collection.id}
-                                        htmlFor={collection.id}
-                                        className="flex min-w-0 cursor-pointer items-center gap-2 rounded-md px-2 py-2 hover:bg-muted/50 active:bg-muted"
-                                    >
-                                        <Checkbox
-                                            id={collection.id}
-                                            checked={selectedCollectionIds.includes(collection.id)}
-                                            disabled={loading || saving}
-                                            onCheckedChange={(checked) =>
-                                                handleCollectionChange(
-                                                    collection.id,
-                                                    checked === true
-                                                )
-                                            }
-                                        />
-
-                                        <span className="truncate">{collection.name}</span>
-                                    </label>
-                                ))}
-                            </div>
+                            <CollectionCheckboxList
+                                collections={collections}
+                                selectedIds={selectedCollectionIds}
+                                disabled={loading || saving}
+                                onChange={handleCollectionChange}
+                            />
                         </div>
                     )}
 

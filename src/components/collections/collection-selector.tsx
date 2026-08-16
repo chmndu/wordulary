@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { LoadingSpinner } from "../ui/loading-spinner";
-import { Checkbox } from "@/components/ui/checkbox";
+import { CollectionCheckboxList } from "./collection-checkbox-list";
 
 type CollectionSelectorProps = {
     termId: string;
@@ -82,35 +82,19 @@ export function CollectionSelector({
                 Collections
             </h2>
 
-            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {collections.map(
-                    (collection) => (
-                        <label
-                            key={collection.id}
-                            htmlFor={collection.id}
-                            className="flex min-w-0 cursor-pointer items-center gap-2 rounded-md px-2 py-2 hover:bg-muted/50 active:bg-muted"
-                        >
-                            <Checkbox
-                                id={collection.id}
-                                checked={selectedIds.includes(collection.id)}
-                                disabled={saving}
-                                onCheckedChange={(checked) =>
-                                    handleChange(collection.id, checked === true)
-                                }
-                            />
+            <CollectionCheckboxList
+                collections={collections}
+                selectedIds={selectedIds}
+                disabled={saving}
+                onChange={handleChange}
+            />
 
-                            <span className="truncate">{collection.name}</span>
-                        </label>
-                    )
-                )}
-
-                {saving && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <LoadingSpinner className="size-3" />
-                        Saving...
-                    </div>
-                )}
-            </div>
+            {saving && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <LoadingSpinner className="size-3" />
+                    Saving...
+                </div>
+            )}
         </div>
     );
 }

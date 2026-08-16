@@ -4,9 +4,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { Checkbox } from "@/components/ui/checkbox";
 import { ErrorMessage } from "@/components/ui/error-message";
 import { SuccessMessage } from "@/components/ui/success-message";
+import { CollectionCheckboxList } from "../collections/collection-checkbox-list";
 
 type ImportTermsFormProps = {
     collections: {
@@ -180,26 +180,12 @@ export function ImportTermsForm({ collections }: ImportTermsFormProps) {
                         </p>
                     </div>
 
-                    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {collections.map((collection) => (
-                            <label
-                                key={collection.id}
-                                htmlFor={collection.id}
-                                className="flex min-w-0 cursor-pointer items-center gap-2 rounded-md px-2 py-2 hover:bg-muted/50 active:bg-muted"
-                            >
-                                <Checkbox
-                                    id={collection.id}
-                                    checked={selectedCollectionIds.includes(collection.id)}
-                                    disabled={loading}
-                                    onCheckedChange={(checked) =>
-                                        handleCollectionChange(collection.id, checked === true)
-                                    }
-                                />
-
-                                <span className="truncate">{collection.name}</span>
-                            </label>
-                        ))}
-                    </div>
+                    <CollectionCheckboxList
+                        collections={collections}
+                        selectedIds={selectedCollectionIds}
+                        disabled={loading}
+                        onChange={handleCollectionChange}
+                    />
                 </div>
             )}
         </section>

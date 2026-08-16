@@ -6,6 +6,8 @@ import { CollectionSelector } from "@/components/collections/collection-selector
 import { deleteTermAndRedirectAction } from "@/actions/terms";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import type { Metadata } from "next";
+import { formatTermType } from "@/lib/terms/format-term-type";
+import { Badge } from "@/components/ui/badge";
 
 type PageProps = {
     params: Promise<{ id: string; }>;
@@ -80,8 +82,8 @@ export default async function TermPage({ params }: PageProps) {
                     {term.term}
                 </h1>
 
-                <p className="mt-1 text-sm text-muted-foreground capitalize">
-                    {term.term_type}
+                <p className="mt-1 text-sm text-muted-foreground">
+                    {formatTermType(term.term_type)}
                 </p>
             </div>
 
@@ -144,9 +146,17 @@ export default async function TermPage({ params }: PageProps) {
                                 Synonyms
                             </h3>
 
-                            <p className="mt-2 leading-7">
-                                {term.synonyms?.join(", ")}
-                            </p>
+                            <div className="mt-3 flex flex-wrap gap-2">
+                                {term.synonyms?.map((synonym: string) => (
+                                    <Badge
+                                        key={synonym}
+                                        variant="secondary"
+                                        className="h-7 px-3 text-sm font-medium"
+                                    >
+                                        {synonym}
+                                    </Badge>
+                                ))}
+                            </div>
                         </div>
 
                         <div>
@@ -154,9 +164,17 @@ export default async function TermPage({ params }: PageProps) {
                                 Antonyms
                             </h3>
 
-                            <p className="mt-2 leading-7">
-                                {term.antonyms?.join(", ")}
-                            </p>
+                            <div className="mt-3 flex flex-wrap gap-2">
+                                {term.antonyms?.map((antonym: string) => (
+                                    <Badge
+                                        key={antonym}
+                                        variant="outline"
+                                        className="h-7 px-3 text-sm font-medium"
+                                    >
+                                        {antonym}
+                                    </Badge>
+                                ))}
+                            </div>
                         </div>
 
                         <div>
@@ -164,9 +182,11 @@ export default async function TermPage({ params }: PageProps) {
                                 Difficulty
                             </h3>
 
-                            <p className="mt-2 leading-7 capitalize">
-                                {term.difficulty}
-                            </p>
+                            <div className="mt-2">
+                                <Badge variant="secondary" className="capitalize">
+                                    {term.difficulty}
+                                </Badge>
+                            </div>
                         </div>
                     </div>
                 )}

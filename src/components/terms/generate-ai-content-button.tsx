@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { ErrorMessage } from "@/components/ui/error-message";
 
 type GenerateAiContentButtonProps = {
     termId: string;
@@ -43,7 +44,7 @@ export function GenerateAiContentButton({ termId }: GenerateAiContentButtonProps
                     ? error.message
                     : "Failed to generate AI content"
             );
-            
+
             setLoading(false);
         }
     }
@@ -59,13 +60,12 @@ export function GenerateAiContentButton({ termId }: GenerateAiContentButtonProps
 
                 {loading ? "Generating..." : "Generate"}
             </Button>
-            {
-                error && (
-                    <p className="text-sm text-red-500">
-                        {error}
-                    </p>
-                )
-            }
+            
+            {error && (
+                <ErrorMessage>
+                    {error}
+                </ErrorMessage>
+            )}
         </>
     );
 }

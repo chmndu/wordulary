@@ -9,6 +9,7 @@ import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/date";
 import type { TermListItem } from "@/types/term-list-item";
+import { formatTermType } from "@/lib/terms/format-term-type";
 
 type TermListCardProps = {
     term: TermListItem;
@@ -39,7 +40,7 @@ export function TermListCard({
                 }}
             >
                 <p
-                    className={`text-lg font-semibold transition-colors wrap-break-word ${deleting
+                    className={`text-base font-semibold transition-colors wrap-break-word ${deleting
                         ? ""
                         : "group-hover:text-primary group-hover:underline"
                     }`}
@@ -48,8 +49,8 @@ export function TermListCard({
                 </p>
 
                 <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
-                    <span className="capitalize">
-                        {term.termType}
+                    <span>
+                        {formatTermType(term.termType)}
                     </span>
 
                     <span>•</span>

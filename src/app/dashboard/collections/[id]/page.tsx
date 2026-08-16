@@ -12,6 +12,7 @@ import { TERMS_PER_PAGE } from "@/lib/constants";
 import { Pagination } from "@/components/ui/pagination";
 import { deleteCollection } from "@/actions/collections";
 import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
+import { formatTermType } from "@/lib/terms/format-term-type";
 
 type CollectionTerm = {
     id: string;
@@ -206,19 +207,15 @@ export default async function CollectionPage({ params, searchParams }: PageProps
                                             href={`/dashboard/terms/${term.id}`}
                                             className="block group"
                                         >
-                                            <p className="text-lg font-semibold transition-colors wrap-break-word group-hover:text-primary group-hover:underline">
+                                            <p className="text-base font-semibold transition-colors wrap-break-word group-hover:text-primary group-hover:underline">
                                                 {term.term}
                                             </p>
 
                                             <div className="mt-3 flex flex-wrap gap-2">
                                                 <Badge
                                                     variant="outline"
-                                                    className="capitalize"
                                                 >
-                                                    {term.term_type.replaceAll(
-                                                        "_",
-                                                        " "
-                                                    )}
+                                                    {formatTermType(term.term_type)}
                                                 </Badge>
 
                                                 <Badge

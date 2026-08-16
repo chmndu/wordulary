@@ -1,4 +1,6 @@
+import { formatTermType } from "@/lib/terms/format-term-type";
 import type { GeneratedTerm } from "@/types/term";
+import { Badge } from "../ui/badge";
 
 type TermPreviewCardProps = {
     generatedTerm: GeneratedTerm;
@@ -14,8 +16,8 @@ export function TermPreviewCard({
                     {generatedTerm.term}
                 </h3>
 
-                <p className="mt-1 text-sm text-muted-foreground capitalize">
-                    {generatedTerm.termType}
+                <p className="mt-1 text-sm text-muted-foreground">
+                    {formatTermType(generatedTerm.termType)}
                 </p>
             </div>
 
@@ -50,9 +52,17 @@ export function TermPreviewCard({
                     Synonyms
                 </h3>
 
-                <p className="mt-2 leading-7">
-                    {generatedTerm.synonyms.join(", ")}
-                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                    {generatedTerm.synonyms.map((synonym) => (
+                        <Badge
+                            key={synonym}
+                            variant="secondary"
+                            className="h-7 px-3 text-sm font-medium"
+                        >
+                            {synonym}
+                        </Badge>
+                    ))}
+                </div>
             </div>
 
             <div>
@@ -60,9 +70,17 @@ export function TermPreviewCard({
                     Antonyms
                 </h3>
 
-                <p className="mt-2 leading-7">
-                    {generatedTerm.antonyms.join(", ")}
-                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                    {generatedTerm.antonyms.map((antonym) => (
+                        <Badge
+                            key={antonym}
+                            variant="outline"
+                            className="h-7 px-3 text-sm font-medium"
+                        >
+                            {antonym}
+                        </Badge>
+                    ))}
+                </div>
             </div>
 
             <div>
@@ -70,9 +88,14 @@ export function TermPreviewCard({
                     Difficulty
                 </h3>
 
-                <p className="mt-2 leading-7 capitalize">
-                    {generatedTerm.difficulty}
-                </p>
+                <div className="mt-2">
+                    <Badge
+                        variant="secondary"
+                        className="capitalize"
+                    >
+                        {generatedTerm.difficulty}
+                    </Badge>
+                </div>
             </div>
         </div>
     );

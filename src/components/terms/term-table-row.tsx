@@ -9,6 +9,7 @@ import { ConfirmDeleteButton } from "@/components/ui/confirm-delete-button";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/date";
 import type { TermListItem } from "@/types/term-list-item";
+import { formatTermType } from "@/lib/terms/format-term-type";
 
 type TermTableRowProps = {
     term: TermListItem;
@@ -44,8 +45,8 @@ export function TermTableRow({
                 </Link>
             </td>
 
-            <td className="px-4 py-3 text-muted-foreground capitalize">
-                {term.termType}
+            <td className="px-4 py-3 text-sm text-muted-foreground">
+                {formatTermType(term.termType)}
             </td>
 
             <td className="px-4 py-3 text-center">
@@ -72,7 +73,7 @@ export function TermTableRow({
                 </Badge>
             </td>
 
-            <td className="px-4 py-3 text-right text-muted-foreground">
+            <td className="px-4 py-3 text-sm text-right text-muted-foreground">
                 {formatDate(term.createdAt)}
             </td>
 

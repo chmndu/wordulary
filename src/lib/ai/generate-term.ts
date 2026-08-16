@@ -21,6 +21,10 @@ export async function generateTerm(term: string): Promise<GeneratedTerm> {
     - Do not wrap the JSON in markdown code blocks.
     - Do not include explanations outside JSON.
     - Return only the JSON object.
+    - exampleSentences MUST contain exactly 3 items.
+    - synonyms MUST contain exactly 3 items.
+    - antonyms MUST contain exactly 3 items.
+    - Never return more or fewer than 3 items in these arrays.
 
     Return exactly this structure:
 
@@ -80,7 +84,14 @@ export async function generateTerm(term: string): Promise<GeneratedTerm> {
 
   const parsed = JSON.parse(text);
 
-  const generatedTerm = generatedTermSchema.parse(parsed);
+  const normalized = {
+    ...parsed,
+    exampleSentences: parsed.exampleSentences?.slice(0, 3),
+    synonyms: parsed.synonyms?.slice(0, 3),
+    antonyms: parsed.antonyms?.slice(0, 3),
+  };
+
+  const generatedTerm = generatedTermSchema.parse(normalized);
 
   return generatedTerm;
 }

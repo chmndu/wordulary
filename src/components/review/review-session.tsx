@@ -116,7 +116,7 @@ export function ReviewSession({ terms, collectionId }: ReviewSessionProps) {
                 {currentIndex + 1} of {terms.length} • {masteredIds.length} mastered
             </p>
 
-            <h2 className="text-3xl font-bold">
+            <h2 className="text-3xl font-semibold">
                 {currentTerm.term}
             </h2>
 
