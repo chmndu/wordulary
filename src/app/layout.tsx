@@ -23,8 +23,7 @@ export const metadata: Metadata = {
   applicationName: siteConfig.name,
 
   icons: {
-    icon: "/favicon.ico",
-    apple: "/icon-192.png",
+    apple: "/icons/icon-192.png",
   },
 };
 

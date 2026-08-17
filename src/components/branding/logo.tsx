@@ -45,6 +45,7 @@ export function Logo({
                         : "/branding/logo.svg"
                 }
                 alt="Wordulary"
+                loading="eager"
                 width={170}
                 height={29}
                 sizes="170px"

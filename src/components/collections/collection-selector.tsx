@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { LoadingSpinner } from "../ui/loading-spinner";
 import { CollectionCheckboxList } from "./collection-checkbox-list";
 
@@ -23,6 +24,8 @@ export function CollectionSelector({
     const [selectedIds, setSelectedIds] = useState(selectedCollectionIds);
 
     const [saving, setSaving] = useState(false);
+
+    const router = useRouter();
 
     if (collections.length === 0) {
         return null;
@@ -67,6 +70,8 @@ export function CollectionSelector({
             if (!response.ok) {
                 throw new Error(data.error ?? "Failed to update collection");
             }
+
+            router.refresh();
         } catch (error) {
             console.error(error);
 
