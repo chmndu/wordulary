@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
         name: "Wordulary",
         short_name: "Wordulary",
         description: "AI-powered vocabulary learning built for focused study.",
-        start_url: "/",
+        start_url: "/dashboard",
         display: "standalone",
         background_color: "#F4F1DE",
         theme_color: "#81B29A",
