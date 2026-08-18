@@ -35,12 +35,14 @@ Use the demo account below to explore the application without creating an accoun
 
 ## 📑 Table of Contents
 
+- [Demo](#-demo)
 - [Features](#-features)
 - [Screenshots](#-screenshots)
 - [Tech Stack](#-tech-stack)
 - [Getting Started](#-getting-started)
 - [Project Structure](#-project-structure)
 - [Roadmap](#-roadmap)
+- [License](#-license)
 
 ---
 
@@ -196,6 +198,12 @@ src/
 - [ ] Spaced repetition
 - [ ] Flashcards
 - [ ] User profile settings
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
 
 ---
 
